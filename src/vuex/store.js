@@ -18,22 +18,16 @@ export default new Vuex.Store({
     },
     CLEAR_USER_DATA() {
       localStorage.removeItem('user')
-
-      // state.user = null
-      // axios.defaults.headers.common['Authorization'] = null
       location.reload()
     }
   },
   actions: {
-    // eslint-disable-next-line space-before-function-paren
     register({ commit }, credentials) {
       return axios
         .post('//localhost:3000/register', credentials)
-        .then(
-          ({ data }) => {
-            commit('SET_USER_DATA', data)
-          }
-        )
+        .then(({ data }) => {
+          commit('SET_USER_DATA', data)
+        })
     },
     login({ commit }, credentials) {
       return axios
@@ -44,7 +38,6 @@ export default new Vuex.Store({
     },
     logout({ commit }) {
       commit('CLEAR_USER_DATA')
-      //commit('LOGOUT')
     }
   },
   getters: {
