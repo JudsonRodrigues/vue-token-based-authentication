@@ -16,9 +16,16 @@ app.get('/', (req, res) => {
   })
 })
 
-app.get('/dashboard', (req, res) => {
-  res.json({
-    events: events
+app.get('/dashboard', verifyToken, (req, res) => {
+  // eslint-disable-next-line padded-blocks
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      res.json({
+        events: events
+      })
+    }
   })
 })
 
@@ -31,10 +38,11 @@ app.post('/register', (req, res) => {
       // In a production app, you'll want to encrypt the password
     }
 
+
     const data = JSON.stringify(user, null, 2)
     var dbUserEmail = require('./db/user.json').email
 
-    if (dbUserEmail === req.body.email) {
+    if (dbUserEmail !== req.body.email) {
       res.sendStatus(400)
     } else {
       fs.writeFile('./db/user.json', data, err => {
@@ -52,6 +60,8 @@ app.post('/register', (req, res) => {
       })
     }
   } else {
+    console.log('erro server js', res)
+
     res.sendStatus(400)
   }
 })
@@ -77,7 +87,9 @@ app.post('/login', (req, res) => {
 })
 
 // MIDDLEWARE
-function verifyToken (req, res, next) {
+
+// eslint-disable-next-line space-before-function-paren
+function verifyToken(req, res, next) {
   const bearerHeader = req.headers['authorization']
 
   if (typeof bearerHeader !== 'undefined') {
